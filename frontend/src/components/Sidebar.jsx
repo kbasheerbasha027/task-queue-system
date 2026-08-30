@@ -4,15 +4,12 @@ import {
   BriefcaseBusiness,
   CalendarClock,
   Cpu,
-  Gauge,
   Layers3,
   LayoutDashboard,
-  LogOut,
   Logs,
   Settings,
   ShieldCheck,
   Sparkles,
-  Workflow,
 } from 'lucide-react';
 
 const navItems = [

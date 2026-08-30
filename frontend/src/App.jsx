@@ -94,7 +94,13 @@ function App() {
 
   return (
     <div className="taskflow-shell min-h-screen bg-transparent text-slate-100">
-      <CommandPalette />
+      <CommandPalette
+        onNavigate={(path) => {
+          setCurrentPath(path);
+          setSidebarOpen(false);
+        }}
+        onSubmitJob={() => setIsModalOpen(true)}
+      />
       <NotificationCenter />
       <div className="flex min-h-screen">
         <Sidebar
