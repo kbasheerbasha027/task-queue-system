@@ -1,7 +1,7 @@
-import { Search, Keyboard } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-export function CommandPalette() {
+export function CommandPalette({ onNavigate, onSubmitJob }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
 
@@ -9,37 +9,35 @@ export function CommandPalette() {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
-        setIsOpen(!isOpen);
+        setIsOpen((prev) => !prev);
       }
-      if (e.key === 'Escape') {
-        setIsOpen(false);
-      }
+      if (e.key === 'Escape') setIsOpen(false);
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+  }, []);
 
   const commands = [
-    { id: '1', label: 'Go to Dashboard', category: 'Navigation', action: () => window.location.hash = '/' },
-    { id: '2', label: 'Go to Jobs', category: 'Navigation', action: () => window.location.hash = '/jobs' },
-    { id: '3', label: 'Go to Workers', category: 'Navigation', action: () => window.location.hash = '/workers' },
-    { id: '4', label: 'Go to Monitoring', category: 'Navigation', action: () => window.location.hash = '/monitoring' },
-    { id: '5', label: 'Go to Logs', category: 'Navigation', action: () => window.location.hash = '/logs' },
-    { id: '6', label: 'Go to Failed Jobs', category: 'Navigation', action: () => window.location.hash = '/failed-jobs' },
-    { id: '7', label: 'Go to Queues', category: 'Navigation', action: () => window.location.hash = '/queues' },
-    { id: '8', label: 'Go to Scheduler', category: 'Navigation', action: () => window.location.hash = '/scheduler' },
-    { id: '9', label: 'Go to Settings', category: 'Navigation', action: () => window.location.hash = '/settings' },
-    { id: '10', label: 'Refresh Data', category: 'Actions', action: () => window.dispatchEvent(new Event('queue-refresh')) },
-    { id: '11', label: 'Toggle Sidebar', category: 'UI', action: () => {} },
+    { id: 'search', label: 'Search Jobs', category: 'Jobs', keywords: 'find jobs', action: () => onNavigate?.('/jobs') },
+    { id: 'submit', label: 'Submit Job', category: 'Actions', keywords: 'create new task', action: () => onSubmitJob?.() },
+    { id: 'workers', label: 'Open Workers', category: 'Navigation', action: () => onNavigate?.('/workers') },
+    { id: 'queues', label: 'Open Queues', category: 'Navigation', action: () => onNavigate?.('/queues') },
+    { id: 'monitoring', label: 'Open Monitoring', category: 'Navigation', action: () => onNavigate?.('/monitoring') },
+    { id: 'logs', label: 'Open Logs', category: 'Navigation', action: () => onNavigate?.('/logs') },
+    { id: 'failed', label: 'Open Failed Jobs', category: 'Navigation', action: () => onNavigate?.('/failed-jobs') },
+    { id: 'settings', label: 'Open Settings', category: 'Navigation', action: () => onNavigate?.('/settings') },
+    { id: 'dashboard', label: 'Open Dashboard', category: 'Navigation', action: () => onNavigate?.('/') },
+    { id: 'refresh', label: 'Refresh Data', category: 'Actions', action: () => window.dispatchEvent(new Event('queue-refresh')) },
   ];
 
-  const filtered = commands.filter(cmd =>
-    cmd.label.toLowerCase().includes(query.toLowerCase()) ||
-    cmd.category.toLowerCase().includes(query.toLowerCase())
+  const filtered = commands.filter(
+    (cmd) =>
+      cmd.label.toLowerCase().includes(query.toLowerCase()) ||
+      cmd.category.toLowerCase().includes(query.toLowerCase()) ||
+      (cmd.keywords || '').includes(query.toLowerCase()),
   );
 
-  const handleCommand = (action) => {
+  const run = (action) => {
     action();
     setIsOpen(false);
     setQuery('');
@@ -49,76 +47,46 @@ export function CommandPalette() {
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity"
-        onClick={() => setIsOpen(false)}
-      />
-
-      {/* Command Palette */}
-      <div className="fixed inset-x-0 top-0 z-50 flex items-start justify-center pt-16 px-4">
-        <div className="w-full max-w-xl rounded-2xl border border-blue-500/30 bg-gradient-to-b from-slate-900 to-slate-950 shadow-2xl shadow-blue-500/20 overflow-hidden"
-          style={{ animation: 'slideDown 0.3s ease-out' }}
-        >
-          {/* Search Input */}
-          <div className="border-b border-blue-500/20 px-4 py-3 flex items-center gap-2 bg-slate-900/80">
+      <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+      <div className="fixed inset-x-0 top-0 z-[70] flex items-start justify-center px-4 pt-[max(1rem,10vh)] sm:pt-20">
+        <div className="command-palette-enter w-full max-w-xl overflow-hidden rounded-2xl border border-blue-500/25 bg-slate-950/98 shadow-2xl shadow-cyan-500/10 backdrop-blur-xl">
+          <div className="flex items-center gap-3 border-b border-blue-500/15 px-4 py-3">
             <Search className="h-4 w-4 text-slate-400" />
             <input
               autoFocus
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search TaskFlow..."
-              className="flex-1 bg-transparent text-white outline-none placeholder-slate-500 text-sm"
+              placeholder="Search commands…"
+              className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
             />
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-xs text-slate-400 hover:text-slate-300 px-2 py-1 rounded border border-slate-700 hover:border-slate-600"
-            >
-              Esc
-            </button>
+            <kbd className="hidden rounded border border-slate-700 bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400 sm:inline">Esc</kbd>
           </div>
-
-          {/* Commands List */}
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-[min(24rem,50vh)] overflow-y-auto custom-scrollbar">
             {filtered.length === 0 ? (
-              <div className="px-4 py-8 text-center text-slate-400">
-                No commands found
-              </div>
+              <div className="px-4 py-8 text-center text-sm text-slate-500">No commands found</div>
             ) : (
               filtered.map((cmd) => (
                 <button
                   key={cmd.id}
-                  onClick={() => handleCommand(cmd.action)}
-                  className="w-full px-4 py-3 text-left hover:bg-blue-500/10 transition border-b border-slate-800/50 last:border-0 flex items-center justify-between group"
+                  type="button"
+                  onClick={() => run(cmd.action)}
+                  className="flex w-full items-center justify-between border-b border-slate-800/40 px-4 py-3 text-left transition hover:bg-cyan-500/8 last:border-0"
                 >
                   <div>
-                    <p className="text-sm font-medium text-white group-hover:text-cyan-300 transition">
-                      {cmd.label}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-0.5">{cmd.category}</p>
+                    <p className="text-sm font-medium text-white">{cmd.label}</p>
+                    <p className="text-[10px] text-slate-500">{cmd.category}</p>
                   </div>
-                  <Keyboard className="h-3 w-3 text-slate-600 opacity-0 group-hover:opacity-100 transition" />
+                  <kbd className="rounded border border-slate-700/60 px-1.5 py-0.5 text-[10px] text-slate-500">↵</kbd>
                 </button>
               ))
             )}
           </div>
+          <div className="border-t border-blue-500/10 px-4 py-2 text-[10px] text-slate-600">
+            <span className="text-slate-500">Ctrl+K</span> to toggle · Navigate without leaving the page
+          </div>
         </div>
       </div>
-
-      {/* Styles */}
-      <style>{`
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </>
   );
 }

@@ -41,10 +41,10 @@ export function Navbar({ title, subtitle, health, onRefresh }) {
 
           <button
             type="button"
+            onClick={() => window.dispatchEvent(new Event('taskflow:toggle-notifications'))}
             className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-blue-500/15 bg-slate-900/60 text-slate-200 transition hover:border-cyan-400/30 hover:bg-slate-800/80"
             aria-label="Notifications"
           >
-            <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
             <Bell className="h-4 w-4 text-cyan-200" />
           </button>
         </div>

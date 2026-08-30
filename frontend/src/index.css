@@ -138,3 +138,75 @@ textarea {
     scroll-behavior: auto !important;
   }
 }
+
+@keyframes topologyPulse {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(48px); opacity: 0.3; }
+}
+
+@keyframes activityEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes queueItemEnter {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes drawerEnter {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes commandPaletteEnter {
+  from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes timelineNodeEnter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.topology-pulse {
+  animation: topologyPulse 2s ease-in-out infinite;
+}
+
+.activity-enter {
+  animation: activityEnter 0.35s ease-out both;
+}
+
+.queue-item-enter {
+  animation: queueItemEnter 0.3s ease-out both;
+}
+
+.drawer-enter {
+  animation: drawerEnter 0.3s ease-out;
+}
+
+.command-palette-enter {
+  animation: commandPaletteEnter 0.25s ease-out;
+}
+
+.timeline-node-enter {
+  animation: timelineNodeEnter 0.4s ease-out both;
+}
+
+.topology-node {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.35);
+  border-radius: 3px;
+}
