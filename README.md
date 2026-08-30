@@ -574,14 +574,3 @@ TaskFlow was built to explore practical distributed-system concepts including:
 
 Computer Science Engineering Student
 
----
-
-# ⭐ Support
-
-If you find this project interesting, consider giving the repository a ⭐ on GitHub.
-
----
-
-## 📄 License
-
-This project is intended for educational and portfolio purposes.
